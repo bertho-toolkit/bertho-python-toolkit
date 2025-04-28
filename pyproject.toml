@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "bertho-toolkit"
-version = "0.1.0"
+version = "1.0.0"
 description = "Collection of utilities for logging, file management, and environment variable handling."
 readme = "README.md"
 license = { text = "MIT" }
