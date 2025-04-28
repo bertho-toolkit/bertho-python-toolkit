@@ -1,0 +1,22 @@
+﻿#[tool.poetry]
+#name = "bertho-toolkit"
+#version = "0.1.0"
+#description = "Um toolkit pessoal em Python"
+#authors = ["Seu Nome <email@exemplo.com>"]
+#packages = [{ include = "bertho_toolkit", from = "src" }]
+#
+#[tool.poetry.dependencies]
+#python = "^3.11"
+#
+#[tool.poetry.dev-dependencies]
+#pytest = "^7.0"
+#flake8 = "^6.0"
+#black = "^24.0"
+#
+#[tool.poetry.scripts]
+## cria o comando 'bertho' no terminal
+#bertho = "bertho_toolkit.cli:main"
+#
+#[build-system]
+#requires = ["poetry-core"]
+#build-backend = "poetry.core.masonry.api"

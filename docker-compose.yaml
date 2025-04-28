@@ -1,0 +1,20 @@
+﻿services:
+  venv:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: venv-shell
+    volumes:
+      - .:/workspace
+      - venv-data:/opt/venv
+      - /c/Users/matheust/AppData/Local/JetBrains/PyCharm2025.1/tmp/docker_compose:/opt/.pycharm_helpers
+    working_dir: /workspace
+    environment:
+      HOME: /workspace
+    tty: true
+    stdin_open: true
+    command:
+      - sh
+
+volumes:
+  venv-data:
