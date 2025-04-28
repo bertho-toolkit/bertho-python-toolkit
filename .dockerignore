@@ -1,0 +1,36 @@
+﻿# .dockerignore
+
+# Git
+.git
+.gitignore
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# PyCharm
+.idea
+
+# Python cache/artefatos
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+venv/
+.venv/
+env/
+.env
+
+# Arquivos de build e distribuição
+build/
+dist/
+*.egg-info/
+
+# Testes
+.pytest_cache/
+.coverage
+
+# Outros
+*.log
+*.swp
