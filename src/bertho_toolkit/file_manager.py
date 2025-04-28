@@ -19,10 +19,8 @@ Uso típico:
 """
 import os
 from typing import List
-from dotenv import dotenv_values
-
-from src.bertho_toolkit.env_manager import EnvManager
-from src.bertho_toolkit.terminal_logger import TerminalLogger
+from .env_manager import EnvManager
+from .terminal_logger import TerminalLogger
 
 # Arquivos/pastas que não devem ser listados
 IGNORED_FILES = {

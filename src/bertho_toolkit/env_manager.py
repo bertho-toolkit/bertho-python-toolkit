@@ -13,8 +13,7 @@ armazenadas em um arquivo '.env'. Suporta:
 
 import os
 from typing import Dict, Optional
-
-from src.bertho_toolkit.terminal_logger import TerminalLogger
+from .terminal_logger import TerminalLogger
 
 
 class EnvManager:

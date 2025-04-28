@@ -4,8 +4,11 @@ services:
   # Nome do serviço (você mudou de 'app' para 'toolkit-venv')
   toolkit-venv:
     build: .
+    environment:
+      - PYTHONPATH=/opt/project/src
     volumes:
-      - .:/app # Garanta que o WORKDIR no seu Dockerfile seja /app
+      - .:/opt/project
+#      - .:/app # Garanta que o WORKDIR no seu Dockerfile seja /app
 
     # Mantenha o contêiner rodando para que o PyCharm possa se conectar a ele.
     # Remova ou comente as linhas stdin_open e tty:
