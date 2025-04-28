@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bertho-toolkit"
+version = "0.1.0"
+description = "Coleção de utilitários para logging, gerenciamento de arquivos e variáveis de ambiente"
+readme = "README.md"
+license = { text = "MIT" }
+authors = [{ name = "Matheus Bertho", email = "matheus.berthot@gmail.com" }]
+requires-python = ">=3.8"
+dependencies = ["python-dotenv>=1.1.0"]
+
+

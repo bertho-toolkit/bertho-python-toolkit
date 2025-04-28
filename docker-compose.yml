@@ -1,28 +1,24 @@
-﻿# docker-compose.yml
-
-services:
-  # Nome do serviço (você mudou de 'app' para 'toolkit-venv')
+﻿services:
   toolkit-venv:
     build: .
+    working_dir: /opt/project
     environment:
       - PYTHONPATH=/opt/project/src
+      - TWINE_USERNAME=${TWINE_USERNAME}
+      - TWINE_PASSWORD=${TWINE_PASSWORD}
     volumes:
       - .:/opt/project
-#      - .:/app # Garanta que o WORKDIR no seu Dockerfile seja /app
-
-    # Mantenha o contêiner rodando para que o PyCharm possa se conectar a ele.
-    # Remova ou comente as linhas stdin_open e tty:
-    # stdin_open: true # Equivalente a -i no docker run
-    # tty: true        # Equivalente a -t no docker run
-
-    # Adicione o comando para manter o container ativo:
-    command: sleep infinity
-
-    # Seu healthcheck existente (não interfere com o sleep infinity)
+    command: >
+      sh -c "
+        # Remove BOM se houver
+        sed -i '1s/^\xEF\xBB\xBF//' pyproject.toml &&
+        pip install --upgrade build twine &&
+        python -m build &&
+        twine upload --non-interactive dist/* &&
+        sleep infinity
+      "
     healthcheck:
-      test: ["CMD", "python", "--version"] # Verifica se o python no PATH (do venv) responde
+      test: ["CMD", "python", "--version"]
       interval: 30s
       timeout: 10s
       retries: 3
-
-networks: {} # Mantenha se não precisar de redes customizadas
