@@ -1,75 +1,85 @@
-"""
-Módulo terminal_logger
-----------------------
-
-Fornece a classe TerminalLogger para registrar mensagens coloridas no terminal:
-
-  - LogSuccess: exibe mensagem de sucesso (verde).
-  - LogError: exibe mensagem de erro (vermelho).
-  - LogWarning: exibe aviso (amarelo), opcionalmente com motivo.
-  - LogInternal: exibe log interno (cinza) quando habilitado.
-  - LogInformation: exibe mensagem informativa (ciano).
-"""
 from typing import Optional
 
 
 class TerminalLogger:
     """
-    Logger de terminal com suporte a cores ANSI.
+    A utility class for printing colored logs in the terminal.
 
-    Parâmetros:
-      internal_log (bool): se True, exibe mensagens internas via LogInternal.
+    Attributes:
+        GREEN (str): ANSI code for green color (success messages).
+        RED (str): ANSI code for red color (error messages).
+        YELLOW (str): ANSI code for yellow color (warning messages).
+        CYAN (str): ANSI code for cyan color (informational messages).
+        GRAY (str): ANSI code for gray color (internal debug messages).
+        WHITE (str): ANSI code for white color.
+        RESET (str): ANSI code to reset color.
 
-    Atributos de cor (ANSI):
-      GREEN, RED, YELLOW, CIANO, CINZA, WHITE, RESET
+    Args:
+        enable_internal_log (bool): Enables or disables internal debug logs. Default is True.
     """
-    GREEN: str = "\033[92m"
-    RED: str = "\033[91m"
-    YELLOW: str = "\033[93m"
-    CIANO: str = "\033[96m"
-    CINZA: str = "\033[90m"
-    WHITE: str = "\033[97m"
-    RESET: str = "\033[0m"
 
-    def __init__(self, internal_log: bool = True) -> None:
-        self._internal_log = internal_log
+    GREEN = "\033[92m"
+    RED = "\033[91m"
+    YELLOW = "\033[93m"
+    CYAN = "\033[96m"
+    GRAY = "\033[90m"
+    WHITE = "\033[97m"
+    RESET = "\033[0m"
 
-    def LogSuccess(self, message: str) -> None:
+    def __init__(self, enable_internal_log: bool = True) -> None:
         """
-        Exibe uma mensagem de SUCESSO em verde.
+        Initializes the TerminalLogger.
+
+        Args:
+            enable_internal_log (bool): Flag to enable internal log messages.
+        """
+        self.enable_internal_log = enable_internal_log
+
+    def log_success(self, message: str) -> None:
+        """
+        Logs a success message in green.
+
+        Args:
+            message (str): The success message to display.
         """
         print(f"{self.GREEN}{message}{self.RESET}")
 
-    def LogError(self, message: str) -> None:
+    def log_error(self, message: str) -> None:
         """
-        Exibe uma mensagem de ERRO em vermelho.
+        Logs an error message in red.
+
+        Args:
+            message (str): The error message to display.
         """
         print(f"{self.RED}{message}{self.RESET}")
 
-    def LogWarning(self, message: str, reason: Optional[str] = None) -> None:
+    def log_warning(self, message: str, reason: Optional[str] = None) -> None:
         """
-        Exibe um AVISO em amarelo, com motivo opcional.
+        Logs a warning message in yellow, optionally including a reason.
 
-        Parâmetros:
-          message (str): texto do aviso.
-          reason  (str): contexto ou motivo, será mostrado entre colchetes.
+        Args:
+            message (str): The warning message to display.
+            reason (Optional[str]): An optional reason or context for the warning.
         """
         prefix = f"[ {reason} ] - " if reason else ""
         print(f"{prefix}{self.YELLOW}{message}{self.RESET}")
 
-    def LogInternal(self, message: str, overwrite_show_log: bool = False) -> None:
+    def log_internal(self, message: str, force_display: bool = False) -> None:
         """
-        Exibe uma mensagem de log interno em cinza se internal_log=True.
+        Logs an internal debug message in gray if internal logging is enabled.
 
-        Parâmetros:
-          message             (str): texto do log.
-          overwrite_show_log (bool): força a exibição mesmo que internal_log=False.
+        Args:
+            message (str): The internal message to display.
+            force_display (bool): Forces the message to be displayed regardless of settings.
         """
-        if overwrite_show_log or self._internal_log:
-            print(f"{self.CINZA}{message}{self.RESET}")
+        if self.enable_internal_log or force_display:
+            print(f"{self.GRAY}{message}{self.RESET}")
 
-    def LogInformation(self, message: str) -> None:
+    def log_info(self, message: str) -> None:
         """
-        Exibe uma mensagem de INFORMAÇÃO em ciano.
+        Logs an informational message in cyan.
+
+        Args:
+            message (str): The informational message to display.
         """
-        print(f"{self.CIANO}{message}{self.RESET}")
+        print(f"{self.CYAN}{message}{self.RESET}")
