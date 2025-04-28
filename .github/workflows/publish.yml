@@ -2,8 +2,8 @@
 
 on:
   push:
-    branches:
-      - main
+    tags:
+      - 'v*'
 
 jobs:
   build-and-publish:
@@ -21,6 +21,15 @@ jobs:
       - name: Install build dependencies
         run: |
           python -m pip install --upgrade pip build
+
+      - name: Extract version from tag
+        id: get_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
+
+      - name: Update version in pyproject.toml and setup.cfg
+        run: |
+          sed -i "s/^version = .*/version = \"${VERSION}\"/" pyproject.toml
+          sed -i "s/^version = .*/version = ${VERSION}/" setup.cfg
 
       - name: Build package
         run: |

@@ -1,28 +1,8 @@
-"""
-Módulo file_manager
--------------------
-
-Fornece a classe FileManager para:
-
-  - Carregar caminhos de projeto, saída e busca a partir de variáveis de ambiente.
-  - Listar recursivamente arquivos em um diretório, ignorando arquivos temporários.
-  - Ler e escrever arquivos em disco.
-
-Uso típico:
-
-    from bertho_toolkit import FileManager
-
-    fm = FileManager(env_key="CLASS", enable_log=True)
-    paths = fm.get_files_in_search_path("subpasta")
-    content = FileManager.read_file_content(paths[0])
-    FileManager.write_file_content("saida.txt", "conteúdo")
-"""
-import os
-from typing import List
+from pathlib import Path
+from typing import List, Optional
 from .env_manager import EnvManager
 from .terminal_logger import TerminalLogger
 
-# Arquivos/pastas que não devem ser listados
 IGNORED_FILES = {
     '.env', 'local.env', 'env.example',
     '.DS_Store', 'Thumbs.db', '.gitkeep'
@@ -31,78 +11,95 @@ IGNORED_FILES = {
 
 class FileManager:
     """
-    Gerencia operações de arquivo com base em variáveis de ambiente.
+    Manages file operations based on environment variables.
 
-    Parâmetros:
-      env_key (str): prefixo das variáveis de ambiente (ex.: 'CLASS').
-      enable_log (bool): se True, ativa logs de aviso via TerminalLogger.
+    Attributes:
+        PROJECT_PATH (Path): Base project path loaded from environment variables.
+        OUTPUT_PATH (Path): Path to output files.
+        SEARCH_PATH (Path): Path to search for files.
 
-    Atributos públicos:
-      PROJECT_PATH (Optional[str]): caminho base do projeto.
-      OUTPUT_PATH  (Optional[str]): caminho de saída de arquivos.
-      SEARCH_PATH  (Optional[str]): caminho onde buscar arquivos.
+    Args:
+        env_key (str): Prefix key to search for environment variables (e.g., 'CLASS').
+        enable_log (bool): Enables logging for operations. Default is True.
     """
 
     def __init__(self, env_key: str, enable_log: bool = True) -> None:
+        """
+        Initializes the FileManager by setting paths from environment variables.
+
+        Args:
+            env_key (str): Prefix for environment variables.
+            enable_log (bool): Flag to enable logging.
+        """
         self.env_key = env_key.upper()
         self.logger = TerminalLogger(enable_log)
+        env = EnvManager(enable_log=enable_log)
 
-        # Usa EnvVarManager para carregar .env
-        env = EnvManager(enable_log)
+        self.PROJECT_PATH = Path(env.get_with_prefix(
+            self.env_key, 'PROJECT_PATH', env.get('DEFAULT_PROJECT_PATH', '.')))
+        self.OUTPUT_PATH = Path(env.get_with_prefix(
+            self.env_key, 'OUTPUT_PATH', env.get('DEFAULT_OUTPUT_PATH', './output')))
+        self.SEARCH_PATH = Path(env.get_with_prefix(
+            self.env_key, 'SEARCH_PATH', env.get('DEFAULT_EXTRACTOR_SEARCH_PATH', '.')))
 
-        # Busca VARS específicas ou as padrão
-        self.PROJECT_PATH = env.get_with_prefix(
-            self.env_key, 'PROJECT_PATH', env.get('DEFAULT_PROJECT_PATH')
-        )
-        self.OUTPUT_PATH = env.get_with_prefix(
-            self.env_key, 'OUTPUT_PATH', env.get('DEFAULT_OUTPUT_PATH')
-        )
-        self.SEARCH_PATH = env.get_with_prefix(
-            self.env_key, 'SEARCH_PATH', env.get('DEFAULT_EXTRACTOR_SEARCH_PATH')
-        )
-
-    def get_files_in_search_path(self, append_path: str = "") -> List[str]:
+    def get_files_in_search_path(self, append_path: Optional[str] = "") -> List[Path]:
         """
-        Retorna todos os arquivos sob SEARCH_PATH/append_path, exceto os IGNOREDS.
+        Retrieves a list of file paths within the search directory, optionally appending a sub-path.
 
-        Exemplo:
-          fm.get_files_in_search_path("data")
+        Args:
+            append_path (Optional[str]): Additional subdirectory path to append.
+
+        Returns:
+            List[Path]: List of paths found in the search directory, excluding ignored files.
         """
-        if not self.SEARCH_PATH:
-            self.logger.LogError("SEARCH_PATH não configurado.")
+        if not self.SEARCH_PATH.exists():
+            self.logger.log_error(f"SEARCH_PATH not found: {self.SEARCH_PATH}")
             return []
 
-        target = os.path.join(self.SEARCH_PATH, append_path)
-        if not os.path.exists(target):
-            self.logger.LogWarning(f"Caminho não encontrado: {target}")
+        target = self.SEARCH_PATH / append_path
+        if not target.exists():
+            self.logger.log_warning(f"Path not found: {target}")
             return []
 
-        files_list: List[str] = []
-        for root, _, files in os.walk(target):
-            for name in files:
-                if name in IGNORED_FILES:
-                    continue
-                files_list.append(os.path.join(root, name))
+        files_list: List[Path] = []
+        for file in target.rglob('*'):
+            if file.is_file() and file.name not in IGNORED_FILES:
+                files_list.append(file)
         return files_list
 
     @staticmethod
-    def read_file_content(file_path: str) -> str:
+    def read_file_content(file_path: Path) -> str:
         """
-        Lê todo o conteúdo de um arquivo e retorna como string.
+        Reads the content of a file and returns it as a string.
 
-        Lança IOError se o arquivo não existir ou não puder ser lido.
+        Args:
+            file_path (Path): Path to the file to read.
+
+        Returns:
+            str: Content of the file.
+
+        Raises:
+            IOError: If the file cannot be read.
         """
-        with open(file_path, 'r', encoding='utf-8') as f:
-            return f.read()
+        try:
+            return file_path.read_text(encoding='utf-8')
+        except Exception as e:
+            raise IOError(f"Could not read file {file_path}: {e}")
 
     @staticmethod
-    def write_file_content(file_path: str, content: str) -> None:
+    def write_file_content(file_path: Path, content: str) -> None:
         """
-        Escreve 'content' em 'file_path', criando pastas se necessário.
+        Writes content to a file, creating necessary directories.
 
-        Exemplo:
-          FileManager.write_file_content("out/relatorio.txt", "texto")
+        Args:
+            file_path (Path): Path to the file to write.
+            content (str): Content to write into the file.
+
+        Raises:
+            IOError: If the file cannot be written.
         """
-        os.makedirs(os.path.dirname(file_path), exist_ok=True)
-        with open(file_path, 'w', encoding='utf-8') as f:
-            f.write(content)
+        try:
+            file_path.parent.mkdir(parents=True, exist_ok=True)
+            file_path.write_text(content, encoding='utf-8')
+        except Exception as e:
+            raise IOError(f"Could not write to file {file_path}: {e}")
