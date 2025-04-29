@@ -1,0 +1,46 @@
+site_name: Bertho Toolkit
+site_description: Collection of utilities for logging, file management, and environment variable handling.
+site_author: Matheus Bertho
+repo_url: https://github.com/bertho-toolkit/bertho-python-toolkit
+repo_name: bertho-python-toolkit
+
+theme:
+  name: material
+  logo: assets/logo.png  # (opcional, você pode adicionar um logo em docs/assets/logo.png)
+  favicon: assets/favicon.ico  # (opcional)
+  palette:
+    - scheme: default
+      primary: teal
+      accent: amber
+  font:
+    text: Roboto
+    code: Roboto Mono
+  features:
+    - navigation.tabs
+    - navigation.instant
+    - navigation.expand
+
+nav:
+  - Home: index.md
+  - Getting Started: getting_started.md
+  - Modules:
+      - TerminalLogger: terminal_logger.md
+      - EnvManager: env_manager.md
+      - FileManager: file_manager.md
+
+markdown_extensions:
+  - toc:
+      permalink: true
+  - admonition
+  - footnotes
+  - meta
+  - codehilite
+  - tables
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/bertho-toolkit/bertho-python-toolkit
+
+copyright: |
+  © 2024 Matheus Bertho. Distributed under the MIT License.
