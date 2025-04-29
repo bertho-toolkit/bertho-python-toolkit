@@ -32,4 +32,10 @@ git push origin main
 git tag v$VERSION
 git push origin v$VERSION
 
-echo "✅ Release v$VERSION pushed successfully! GitHub Actions will now publish it to PyPI."
+echo "✅ Release v$VERSION pushed successfully!"
+
+# Deploy MkDocs site to GitHub Pages
+echo "🚀 Deploying documentation to GitHub Pages..."
+mkdocs gh-deploy --clean
+
+echo "✅ Documentation deployed!"
