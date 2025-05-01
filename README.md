@@ -1,7 +1,7 @@
 # Python Toolkit 🛠️🐍
 
-[![PyPI Version](https://img.shields.io/pypi/v/bertho-toolkit.svg)](https://pypi.org/project/bertho-toolkit/) 
-[![PyPI - Downloads](https://img.shields.io/pypi/dm/bertho-toolkit)](https://pypi.org/project/bertho-toolkit/)
+[![PyPI Version](https://img.shields.io/pypi/v/bertho-toolkit.svg)](https://pypi.org/project/bertho-toolkit/)
+[![PyPI Downloads](https://static.pepy.tech/badge/bertho-toolkit)](https://pepy.tech/projects/bertho-toolkit)
 
 Welcome to **Python Toolkit**, a lightweight and personal collection of utilities crafted to make everyday development tasks easier, faster, and more elegant. ✨
 
